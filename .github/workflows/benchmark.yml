@@ -1,0 +1,38 @@
+name: AIOS-Core Benchmark
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'models/**'
+      - 'orchestrator/**'
+      - 'telemetry/**'
+      - 'simulator/**'
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest    # dedicated 2-core, 7GB RAM, no other tenants
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install numpy psutil
+
+      - name: Run benchmark (2x oversubscription on 2 cores)
+        run: |
+          python -m simulator.benchmark \
+            --duration 15 \
+            --workers cpu cpu io io mixed mixed \
+            --model weights/trained.json \
+            --no-online-update --apply \
+            --out logs/benchmark_ci.json
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: logs/benchmark_ci.json

@@ -1,0 +1,42 @@
+
+  Workers   : ['cpu', 'io', 'mixed']
+  Duration  : 15.0s per trial
+  AI apply  : False
+  Tick      : 200ms
+
+  [1/2] Running BASELINE trial...
+        done — 4174.67 total ops/s
+  Cooling down 3s...
+  [2/2] Running AI trial...
+[NeuralScheduler] Weights loaded <- weights\trained.json
+        done — 3969.67 total ops/s
+
+============================================================
+  AIOS-Core Benchmark Results
+============================================================
+
+  [BASELINE]
+    Total ops/s   :    4174.67
+    Mean CPU%     :      27.41
+    Mean MEM%     :      72.81
+      cpu      pid=21144  ops/s=2809.27  rc=0
+      io       pid=11640  ops/s=617.13  rc=0
+      mixed    pid=19036  ops/s=748.27  rc=0
+
+  [AI]
+    Total ops/s   :    3969.67
+    Mean CPU%     :      31.10
+    Mean MEM%     :      72.58
+    AI ticks      :         30
+      cpu      pid=16096  ops/s=2699.00  rc=0
+      io       pid=19856  ops/s=580.60  rc=0
+      mixed    pid=19700  ops/s=690.07  rc=0
+
+============================================================
+  Throughput delta : -205.00 ops/s  (-4.9%)
+  CPU usage delta  : +3.69%
+
+  >> AI reduced throughput (model needs training).
+============================================================
+
+  Results saved -> logs\benchmark_trained.json

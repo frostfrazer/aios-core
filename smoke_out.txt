@@ -1,0 +1,19 @@
+--- Testing NeuralScheduler ---
+predict(): {'cpu_weight': 0.4326435923576355, 'io_weight': 0.3904084265232086, 'nice_delta': -1, 'preempt_ms': 57.08279037475586}
+apply_reward() OK
+[NeuralScheduler] Weights saved -> weights/test_weights.json
+[NeuralScheduler] Weights loaded <- weights/test_weights.json
+save/load OK
+
+--- Testing TelemetryCollector ---
+Collected 336 processes
+Sample PID 0 shape=(12,)
+Values: [0.0000000e+00 1.9073486e-06 0.0000000e+00 0.0000000e+00 1.0000000e+00
+ 0.0000000e+00 2.5000000e-01 0.0000000e+00 1.0000000e+00 1.0000000e+00
+ 2.5641026e-02 0.0000000e+00]
+
+--- Testing Orchestrator (3 ticks) ---
+Ticks fired: []
+Total ticks: 1
+
+ALL TESTS PASSED

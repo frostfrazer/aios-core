@@ -1,0 +1,24 @@
+
+[Train] Generating dataset (300 samples/class x 4 classes)...
+[Train] Dataset: X=(1200, 12)  Y=(1200, 4)
+[Train] Starting training: epochs=300  lr=0.005  batch=32
+
+  epoch    1/300  train_loss=0.3706  val_loss=0.3332  elapsed=0.4s
+  epoch   50/300  train_loss=0.0465  val_loss=0.0457  elapsed=18.0s
+  epoch  100/300  train_loss=0.0237  val_loss=0.0231  elapsed=32.6s
+  epoch  150/300  train_loss=0.0179  val_loss=0.0172  elapsed=196.4s
+  epoch  200/300  train_loss=0.0160  val_loss=0.0153  elapsed=206.7s
+  epoch  250/300  train_loss=0.0150  val_loss=0.0143  elapsed=213.2s
+  epoch  300/300  train_loss=0.0142  val_loss=0.0135  elapsed=219.8s
+[NeuralScheduler] Weights saved -> weights/trained.json
+
+[Train] Done.  final_val_loss=0.0135  best=0.0135
+[Train] Weights -> weights/trained.json
+
+[Train] Sanity check (CPU-bound process):
+  -> {'cpu_weight': 0.9139149188995361, 'io_weight': 0.10382211208343506, 'nice_delta': -7, 'preempt_ms': 17.559635162353516}
+  Expected: nice_delta<0 (got -7), cpu_weight>0.5 (got 0.91)
+
+[Train] Sanity check (IO-bound process):
+  -> {'cpu_weight': 0.1539604365825653, 'io_weight': 0.9012550115585327, 'nice_delta': 6, 'preempt_ms': 84.50845336914062}
+  Expected: nice_delta>0 (got 6), io_weight>0.5 (got 0.90)
