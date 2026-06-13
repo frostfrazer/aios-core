@@ -1,3 +1,0 @@
-CPU_BURN  iters=12995  ops/s=2599.00
-IO_BOUND  iters=1081  ops/s=216.20
-MIXED  cpu_ops=2047  io_ops=1075  total_ops/s=624.40
