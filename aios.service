@@ -1,0 +1,44 @@
+[Unit]
+Description=AIOS-Core AI Process Scheduler
+Documentation=https://github.com/frostfrazer/aios-core
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/aios-daemon
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5s
+
+# Run as root (required for cgroup writes and process priority changes)
+User=root
+Group=root
+
+# Output goes to journald automatically
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=aios
+
+# PID file
+PIDFile=/run/aios/aios.pid
+RuntimeDirectory=aios
+RuntimeDirectoryMode=0755
+
+# Log directory
+LogsDirectory=aios
+LogsDirectoryMode=0750
+
+# Hardening -- allow only what we need
+ProtectSystem=strict
+ReadWritePaths=/etc/aios /var/log/aios /run/aios /sys/fs/cgroup
+ProtectHome=read-only
+NoNewPrivileges=false
+PrivateTmp=true
+
+# Give us time to clean up cgroups on stop
+TimeoutStopSec=10s
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target
