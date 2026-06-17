@@ -21,6 +21,7 @@ import logging
 import psutil
 import numpy as np
 from collections import deque
+from pathlib import Path
 from typing import Optional
 
 from models.neural_scheduler import NeuralScheduler
@@ -66,6 +67,7 @@ class AIOrchestrator:
         apply_os:   bool = False,
         model_path: Optional[str]  = None,
         watch_pids: Optional[list] = None,
+        audit_log:  Optional[str]  = None,
     ):
         self.tick_ms     = tick_ms
         self.apply_os    = apply_os
@@ -83,7 +85,7 @@ class AIOrchestrator:
 
         # Actuation layer
         self.actuator = CgroupActuator() if sys.platform == "linux" else None
-        self.guardian = SafetyGuardian()
+        self.guardian = SafetyGuardian(audit_path=Path(audit_log) if audit_log else None)
         self._seen_pids: set[int] = set()
 
         if model_path:

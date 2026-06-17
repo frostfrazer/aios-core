@@ -86,15 +86,11 @@ def main():
 
     write_pid(cfg["pid_file"])
 
-    # Override audit log path from config
-    from orchestrator import safety as _safety_mod
-    from pathlib import Path as _Path
-    _safety_mod.AUDIT_LOG_PATH = _Path(cfg["audit_log"])
-
     orc = AIOrchestrator(
         tick_ms    = cfg["tick_ms"],
         apply_os   = cfg["apply_os"],
         model_path = cfg["model_path"] if Path(cfg["model_path"]).exists() else None,
+        audit_log  = cfg["audit_log"],
     )
 
     # ── Signal handlers ───────────────────────────────────────────────────────

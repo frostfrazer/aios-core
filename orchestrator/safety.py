@@ -65,12 +65,12 @@ class SafetyGuardian:
         max_delta:        float = MAX_DELTA_PER_TICK,
         rollback_thresh:  float = ROLLBACK_THRESHOLD,
         quarantine_ticks: int   = QUARANTINE_TICKS,
-        audit_path:       Path  = AUDIT_LOG_PATH,
+        audit_path:       Path  = None,
     ):
         self.max_delta        = max_delta
         self.rollback_thresh  = rollback_thresh
         self.quarantine_ticks = quarantine_ticks
-        self.audit_path       = audit_path
+        self.audit_path       = Path(audit_path) if audit_path else AUDIT_LOG_PATH
         self._state: dict[int, PidState] = defaultdict(PidState)
 
         try:
