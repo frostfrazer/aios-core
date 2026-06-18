@@ -96,11 +96,15 @@ class TelemetryCollector:
 
         for proc in psutil.process_iter(
             ["pid", "cpu_percent", "memory_info", "io_counters",
-             "num_ctx_switches", "num_threads", "open_files",
+             "num_ctx_switches", "num_threads",
              "status", "cpu_affinity", "nice", "create_time"]
         ):
             try:
                 pid  = proc.info["pid"]
+                # Skip processes younger than 3s — transient, not worth tuning
+                create_time = proc.info.get("create_time") or 0
+                if (now - create_time) < 5.0:
+                    continue
                 feat = self._extract(proc.info, pid, dt)
                 if feat is not None:
                     results[pid] = feat

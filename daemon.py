@@ -76,6 +76,11 @@ def remove_pid(path: str):
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
+    # Renice AIOS to low priority — it must never compete with managed processes
+    try:
+        os.nice(10)
+    except OSError:
+        pass
     cfg = load_config()
     setup_logging(cfg["log_level"])
     log = logging.getLogger("daemon")

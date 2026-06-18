@@ -63,7 +63,7 @@ class AIOrchestrator:
 
     def __init__(
         self,
-        tick_ms:    int  = 200,
+        tick_ms:    int  = 500,
         apply_os:   bool = False,
         model_path: Optional[str]  = None,
         watch_pids: Optional[list] = None,
@@ -120,6 +120,12 @@ class AIOrchestrator:
         while self._running:
             t0 = time.perf_counter()
             try:
+                # Adaptive backoff: skip actuation when system is saturated
+                import psutil as _psutil
+                _cpu_load = _psutil.getloadavg()[0] / _psutil.cpu_count() * 100
+                if _cpu_load > 90.0:
+                    time.sleep(self.tick_ms / 1000)
+                    continue
                 self._tick()
             except Exception as e:
                 log.warning(f"Tick error: {e}")
