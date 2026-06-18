@@ -120,6 +120,13 @@ class SafetyGuardian:
                     "quarantine_until": st.quarantined_until,
                     "total_rollbacks": st.total_rollbacks,
                 })
+                import sys as _sys
+                print(
+                    f"[AIOS ALERT] PID {pid} quarantined at tick {tick} "
+                    f"(mean_reward={mean_reward:.4f} < {self.rollback_thresh}, "
+                    f"rollbacks={st.total_rollbacks}, resumes_tick={st.quarantined_until})",
+                    file=_sys.stderr, flush=True,
+                )
                 return DEFAULT_WEIGHT, DEFAULT_WEIGHT, "rollback"
 
         # ── Rate-limited apply ──────────────────────────────────────────────────
