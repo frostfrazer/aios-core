@@ -126,7 +126,7 @@ class SafetyGuardian:
         new_cpu = self._step_towards(st.current_cpu_weight, raw_cpu_w)
         new_io  = self._step_towards(st.current_io_weight,  raw_io_w)
 
-        if abs(new_cpu - st.current_cpu_weight) > 1e-6 or abs(new_io - st.current_io_weight) > 1e-6:
+        if abs(new_cpu - st.current_cpu_weight) > 0.005 or abs(new_io - st.current_io_weight) > 0.005:
             self._audit(pid, tick, "apply", {
                 "cpu_weight": round(new_cpu, 4),
                 "io_weight":  round(new_io, 4),
