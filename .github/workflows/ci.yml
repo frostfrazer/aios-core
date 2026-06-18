@@ -1,0 +1,67 @@
+name: AIOS-Core CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install numpy psutil
+
+      - name: Mount cgroup v2
+        run: |
+          if ! mountpoint -q /sys/fs/cgroup; then
+            echo "cgroup v2 not mounted — actuator will run in dry-run mode"
+          fi
+
+      - name: Smoke test (import + init)
+        run: |
+          python3 - <<'EOF'
+          import sys
+          sys.path.insert(0, '.')
+          from models.neural_scheduler import NeuralScheduler
+          from telemetry.collector import TelemetryCollector
+          from orchestrator.safety import SafetyGuardian
+          from orchestrator.engine import AIOrchestrator
+          ns = NeuralScheduler()
+          sg = SafetyGuardian()
+          print("imports OK")
+          EOF
+
+      - name: Run benchmark (15s, no OS apply)
+        run: |
+          python3 benchmark/harness.py --duration 15 --no-apply --out /tmp/ci_result.json
+        timeout-minutes: 3
+
+      - name: Parse and gate result
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+          data = json.load(open('/tmp/ci_result.json'))
+          delta_pct = data['delta']['pct_change']
+          print(f"Throughput delta: {delta_pct:+.2f}%")
+          # Gate: must not regress more than 5% vs baseline
+          if delta_pct < -5.0:
+              print(f"FAIL: regression {delta_pct:.2f}% exceeds -5% threshold")
+              sys.exit(1)
+          print("PASS")
+          EOF
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-result
+          path: /tmp/ci_result.json
