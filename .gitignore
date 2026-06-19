@@ -1,6 +1,5 @@
+/opt/aios-core/logs/*.jsonl
+/opt/aios-core/logs/*.log
+/opt/aios-core/weights/*.json
 __pycache__/
 *.pyc
-weights/weights_tick*.json
-logs/*.txt
-logs/*.log
-*.txt
