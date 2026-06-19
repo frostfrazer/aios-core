@@ -172,6 +172,14 @@ class SafetyGuardian:
     # ── Audit log ─────────────────────────────────────────────────────────────
 
     def _audit(self, pid: int, tick: int, event: str, extra: dict):
+        # In-process size guard -- don't rely solely on cron-driven logrotate
+        try:
+            import os as _os
+            if _os.path.exists(self.audit_path) and _os.path.getsize(self.audit_path) > 50 * 1024 * 1024:
+                _os.rename(self.audit_path, self.audit_path + ".1")
+        except OSError:
+            pass
+
         record = {
             "ts":    time.time(),
             "tick":  tick,
