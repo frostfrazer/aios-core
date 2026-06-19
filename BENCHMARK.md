@@ -69,3 +69,42 @@ On a 30-second mixed-workload run observed during development:
 - 15s trial is too short for full RL convergence — extend to 60s minimum in next CI run
 - Add per-worker latency (p50/p95) alongside throughput
 - Test with real application workloads (web server, DB queries)
+
+
+---
+
+## SMB Real-World Validation (2026-06-19)
+
+Synthetic CI benchmarks above were supplemented with a sustained 60s mixed
+workload (2x web-handler, 2x SQLite DB writer, 2x background CPU job) on an
+8-vCPU WSL2 host -- closer to a real small-business server profile.
+
+| Worker | Baseline ops/s | AIOS ops/s | Delta |
+|--------|---------------:|-----------:|------:|
+| web    | 72,004         | 74,711     | **+3.8%** |
+| db     | 178,108        | 181,952    | **+2.2%** |
+| bg     | 51,631         | 53,643     | **+3.9%** |
+| **Total** | **301,744** | **310,306** | **+2.8%** |
+
+All three workload classes improved -- consistent, modest, real.
+
+### What changed to get here
+
+Initial validation runs showed a **-15.6% regression**, not an improvement.
+Root causes found and fixed:
+
+1. `open_files` in `psutil.process_iter()` triggered a full `/proc/PID/fd`
+   directory scan on every tracked process, every tick. Removed.
+2. Transient/short-lived processes (workload spawns) were being tracked and
+   actuated needlessly. Added a 5-second minimum-uptime filter.
+3. The AIOS daemon itself was not deprioritised and competed for CPU with
+   the processes it managed. Fixed with `nice +10` at daemon startup.
+4. The adaptive-load backoff used a blocking `psutil.cpu_percent()` call
+   that returns 0.0 on first invocation. Replaced with non-blocking
+   `os.getloadavg()`.
+5. Control loop tick raised from 200ms to 500ms to reduce syscall volume.
+6. **A stale daemon instance from a prior session had been silently running
+   for over 24 hours**, consuming 28% CPU continuously and contaminating
+   every benchmark run until discovered and killed. A reminder that
+   `systemctl stop` does not guarantee process death if the unit state is
+   already `failed` -- always verify with `ps aux` before benchmarking.
