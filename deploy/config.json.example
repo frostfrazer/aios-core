@@ -1,0 +1,8 @@
+{
+  "tick_ms":    500,
+  "apply_os":   true,
+  "model_path": "/etc/aios/weights.json",
+  "log_level":  "INFO",
+  "pid_file":   "/run/aios/aios.pid",
+  "audit_log":  "/var/log/aios/audit.jsonl"
+}
