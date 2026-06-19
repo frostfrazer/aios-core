@@ -70,7 +70,7 @@ if [[ ! -f "$CONFIG_DIR/config.json" ]]; then
     info "Writing default config to $CONFIG_DIR/config.json..."
     cat > "$CONFIG_DIR/config.json" <<CONFIG
 {
-  "tick_ms":    200,
+  "tick_ms":    500,
   "apply_os":   true,
   "model_path": "/etc/aios/weights.json",
   "log_level":  "INFO",
